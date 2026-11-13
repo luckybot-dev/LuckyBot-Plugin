@@ -86,6 +86,30 @@ export interface PluginExtensionPoints {
   httpRoutes?: HttpRoute[];
   scenes?: PluginSceneDefinition[];
   promptHints?: (chatId: string) => PromptHint[] | undefined;
+  /**
+   * Strips secrets from every text part the host sends to a model (system
+   * prompt, messages, tool-call arguments, tool results). Must be pure, sync
+   * and deterministic: the same input always yields the same output, with no
+   * I/O and no state that changes between calls. Return the input unchanged
+   * when there is nothing to remove. Global, not per chat: the host composes
+   * the functions of all active plugins that declare it. Images, persisted
+   * events and turn responses are never passed through it.
+   */
+  redactText?: (text: string) => string;
+  /**
+   * Shadow companion of `redactText`: describes what `redactText` would remove
+   * without changing anything. Same purity rules. The host aggregates the hits
+   * per model request and logs them at debug level; it never receives, and
+   * must never be given, the matched text itself.
+   */
+  inspectText?: (text: string) => RedactionHit[];
+}
+
+export interface RedactionHit {
+  kind: string;
+  length: number;
+  /** Short digest of the matched text (8 hex characters), for telling repeats apart. */
+  hash: string;
 }
 
 export interface PluginCapabilities {
