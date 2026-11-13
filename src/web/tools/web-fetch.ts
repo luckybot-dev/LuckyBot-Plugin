@@ -1,7 +1,10 @@
-import type { PluginTool } from '../../sdk/types';
-import type { WebFetcher } from '../types';
+import type { PluginTool, PluginToolBackground } from '../../sdk/types';
+import { DEFAULT_WEB_TOOL_BACKGROUND, type WebFetcher } from '../types';
 
-export const createWebFetchTool = (fetcher: WebFetcher): PluginTool => ({
+export const createWebFetchTool = (
+  fetcher: WebFetcher,
+  background: PluginToolBackground = DEFAULT_WEB_TOOL_BACKGROUND,
+): PluginTool => ({
   name: 'web_fetch',
   description: 'Fetch a web page by URL and return its content as clean, readable Markdown. Use this to read articles, docs, or any page the conversation references.',
   parameters: {
@@ -11,6 +14,7 @@ export const createWebFetchTool = (fetcher: WebFetcher): PluginTool => ({
     },
     required: ['url'],
   },
+  background,
   execute: async input => {
     const { url } = input as { url: string };
     const result = await fetcher.fetch(url);

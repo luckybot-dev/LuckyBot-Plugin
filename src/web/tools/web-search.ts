@@ -1,9 +1,12 @@
-import type { PluginTool } from '../../sdk/types';
-import type { WebSearcher } from '../types';
+import type { PluginTool, PluginToolBackground } from '../../sdk/types';
+import { DEFAULT_WEB_TOOL_BACKGROUND, type WebSearcher } from '../types';
 
 const EMPTY_RESULTS_NOTE = 'No results. The search index has nothing for this query; that is not evidence the thing does not exist (new or unindexed pages are common).';
 
-export const createWebSearchTool = (searcher: WebSearcher): PluginTool => ({
+export const createWebSearchTool = (
+  searcher: WebSearcher,
+  background: PluginToolBackground = DEFAULT_WEB_TOOL_BACKGROUND,
+): PluginTool => ({
   name: 'web_search',
   description: 'Search the web. Returns up to 5 results with title, URL, and a relevant snippet/passage. No results or an error only means this search found nothing; it never shows that something does not exist.',
   parameters: {
@@ -13,6 +16,7 @@ export const createWebSearchTool = (searcher: WebSearcher): PluginTool => ({
     },
     required: ['query'],
   },
+  background,
   execute: async input => {
     const { query } = input as { query: string };
     const result = await searcher.search(query);

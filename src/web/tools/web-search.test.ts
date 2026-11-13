@@ -19,3 +19,15 @@ describe('web_search tool', () => {
     expect(requiresFollowUp).toBe(true);
   });
 });
+
+describe('web tools background declaration', () => {
+  it('moves web_search and web_fetch to the background after the default threshold', () => {
+    const search = createWebSearchTool({ search: () => Promise.resolve({ results: [] }) });
+    expect(search.background).toEqual({ afterMs: 4000, timeoutMs: 60_000 });
+  });
+
+  it('accepts an override', () => {
+    const search = createWebSearchTool({ search: () => Promise.resolve({ results: [] }) }, { afterMs: 1, timeoutMs: 2 });
+    expect(search.background).toEqual({ afterMs: 1, timeoutMs: 2 });
+  });
+});

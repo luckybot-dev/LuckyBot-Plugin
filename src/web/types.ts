@@ -1,5 +1,7 @@
 import * as v from 'valibot';
 
+import type { PluginToolBackground } from '../sdk/types';
+
 export class HttpError extends Error {
   constructor(public readonly status: number, url: string) {
     super(`HTTP ${status}: ${url}`);
@@ -45,7 +47,17 @@ export interface WebFetchConfig {
   jina: { apiKey: string };
 }
 
+export const DEFAULT_WEB_TOOL_BACKGROUND: PluginToolBackground = {
+  afterMs: 4000,
+  timeoutMs: 60_000,
+};
+
 export const WebConfigSchema = v.object({
+  // Overrides the thresholds at which web_search/web_fetch move to a background task.
+  background: v.optional(v.object({
+    afterMs: v.pipe(v.number(), v.minValue(0)),
+    timeoutMs: v.pipe(v.number(), v.minValue(1)),
+  })),
   providers: v.optional(v.partial(v.object({
     tavily: v.partial(v.object({ apiKey: v.string() })),
     microsoftGrounding: v.partial(v.object({ apiKey: v.string() })),
