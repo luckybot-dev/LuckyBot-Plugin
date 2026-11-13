@@ -9,10 +9,12 @@
     "test": "vitest run"
   },
   "peerDependencies": {
+    "croner": "^11.0.0",
     "valibot": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "croner": "^11.0.0",
     "typescript": "^5.7.0",
     "valibot": "^1.2.0",
     "vitest": "^3.0.0"
