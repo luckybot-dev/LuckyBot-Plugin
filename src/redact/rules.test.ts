@@ -221,6 +221,14 @@ describe('financial identifiers', () => {
     expect(redactSecrets('card 4111-1111-1111-1111')).toBe('card [redacted:bank-card]');
     expect(redactSecrets('amex 378282246310005')).toBe('amex [redacted:bank-card]');
     expect(redactSecrets('银联 6222021234567890128')).toBe('银联 [redacted:bank-card]');
+    expect(redactSecrets('amex 3782 822463 10005')).toBe('amex [redacted:bank-card]');
+  });
+
+  it('does not join numbers with mixed grouping into a card', () => {
+    // From the production audit: consecutive Fibonacci numbers, Luhn-valid once joined.
+    const fib = '14930352\n24157817 39088169 63245986 102334155 165580141';
+    expect(redactSecrets(fib)).toBe(fib);
+    expect(redactSecrets('4111 1111-1111 1111')).toBe('4111 1111-1111 1111');
   });
 
   it('keeps Luhn-invalid digit runs', () => {

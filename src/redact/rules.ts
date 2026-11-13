@@ -608,10 +608,13 @@ const PATTERN_RULES: readonly PatternRule[] = [
   { kind: 'private-key', re: /(?<![A-Za-z0-9])secret-extended-key-(?:main|test)1[0-9a-z]{150,320}(?![A-Za-z0-9])/g },
 
   // --- personal financial identifiers (checksummed) -------------------------
-  // 13-19 digits, grouped in fours or an Amex 4-6-5, starting with 3-6, Luhn-valid
+  // 13-19 digits starting with 3-6, Luhn-valid: either contiguous, or grouped in
+  // fours (or an Amex 4-6-5) with one consistent separator. Mixed grouping is
+  // rejected: the production audit (2026-11-13) hit "39088169 63245986", two
+  // Fibonacci numbers that happen to pass Luhn once the space is dropped.
   {
     kind: 'bank-card',
-    re: /(?<![0-9A-Za-z])(?:3[47]\d{2}[ -]?\d{6}[ -]?\d{5}|[3-6]\d{3}(?:[ -]?\d{4}){2,3}(?:[ -]?\d{1,3})?)(?![0-9A-Za-z])/g,
+    re: /(?<![0-9A-Za-z])(?:3[47]\d{2}([ -])\d{6}\1\d{5}|[3-6]\d{3}([ -])\d{4}(?:\2\d{4}){1,2}(?:\2\d{1,3})?|[3-6]\d{12,18})(?![0-9A-Za-z])/g,
     check: v => luhn(v.replace(/[ -]/g, '')),
   },
   // 18-character Chinese resident ID, region + date + sequence + check digit
