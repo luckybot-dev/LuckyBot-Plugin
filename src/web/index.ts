@@ -55,7 +55,7 @@ export const webPlugin = definePlugin<WebPluginConfig>({
           provider: searchProvider as WebSearchProvider,
           apiKey,
         });
-        tools.push(createWebSearchTool(searcher));
+        tools.push(createWebSearchTool(searcher, globalConfig.background));
       }
 
       if (fetchProvider === 'jina') {
@@ -64,7 +64,7 @@ export const webPlugin = definePlugin<WebPluginConfig>({
           provider: 'jina',
           jina: { apiKey },
         });
-        tools.push(createWebFetchTool(fetcher));
+        tools.push(createWebFetchTool(fetcher, globalConfig.background));
       }
 
       return tools;

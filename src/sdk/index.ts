@@ -13,6 +13,7 @@ export {
   type PluginLogger,
   type PluginSceneDefinition,
   type PluginTool,
+  type PluginToolBackground,
   type PluginToolResult,
   type PromptHint,
 } from './types';

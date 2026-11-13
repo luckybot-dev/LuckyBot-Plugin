@@ -48,11 +48,29 @@ export interface PluginToolResult {
   requiresFollowUp?: boolean;
 }
 
+/**
+ * Opt-in for slow tools. If `execute` has not settled after `afterMs`, the host
+ * moves the still-running call into a background task bounded by `timeoutMs`
+ * and returns a task id to the model at once; the result reaches the chat later
+ * as a runtime event that wakes the bot. A call that settles in time returns
+ * inline, exactly as without this field.
+ */
+export interface PluginToolBackground {
+  afterMs: number;
+  timeoutMs: number;
+}
+
 export interface PluginTool {
   name: string;
   description: string;
   parameters: Record<string, unknown>;
-  execute(input: unknown): Promise<PluginToolResult> | PluginToolResult;
+  background?: PluginToolBackground;
+  /**
+   * `signal` is passed only for tools that declare `background` and aborts when
+   * the host abandons the call (timeout, cancellation, shutdown). Honouring it
+   * is optional; an ignored abort just discards the late result.
+   */
+  execute(input: unknown, signal?: AbortSignal): Promise<PluginToolResult> | PluginToolResult;
 }
 
 export interface PluginSceneDefinition {

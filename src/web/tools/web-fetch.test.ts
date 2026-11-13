@@ -28,3 +28,10 @@ describe('web_fetch tool', () => {
     expect(requiresFollowUp).toBe(true);
   });
 });
+
+describe('web_fetch background declaration', () => {
+  it('declares the default background thresholds', () => {
+    const tool = createWebFetchTool({ fetch: () => Promise.resolve({ url: 'https://x', content: 'c' }) });
+    expect(tool.background).toEqual({ afterMs: 4000, timeoutMs: 60_000 });
+  });
+});
