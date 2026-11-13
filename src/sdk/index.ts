@@ -16,4 +16,5 @@ export {
   type PluginToolBackground,
   type PluginToolResult,
   type PromptHint,
+  type RedactionHit,
 } from './types';

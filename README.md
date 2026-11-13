@@ -17,6 +17,7 @@ src/
 ├── sdk/              Plugin SDK contract and type definitions
 ├── tavern/           Tavern webhook protocol (HMAC verification, routing, dedupe, scenes)
 ├── web/              Web search & fetch plugin (tavily, exa, jina, microsoft grounding)
+├── redact/           Secret redaction for model-bound text (rules ported from magpie, MIT)
 ├── games/
 │   ├── types.ts      Game module interface (choices path + legacy actions)
 │   ├── liars-bar/    Liar's Bar logic (classic/devil/chaos, fallback, events, notes)
@@ -35,6 +36,9 @@ The repository includes the `tavern` plugin implementing the dealer webhook prot
 - **Invitations**: Configured via `plugins.tavern.invitation: { decide: 'ask' | 'always', timeoutMs: 8000, onTimeout: 'accept' | 'decline' }`. In `decide: 'ask'` mode, the bot uses the core `ask` capability to decide in-character whether to accept table invitations based on persona, waiting players, and recent chat context. Per-game `modes` allowlists can decline specific modes (e.g. `games.liars_bar.modes: [classic, devil]`).
 - **Decisions**: The dealer's generic `ask` / `prompt` / `rules` / `choices` path is primary; the legacy per-game action shape is used only when `choices` is absent. Budget is `min(decisionTimeoutMs, deadline_ms - 3000)`, default 40000 ms.
 - **Dealer Commands**: Prompt hints instruct the bot to never post dealer commands starting with `!` (e.g. `!加入`, `!开始`) into the group; seats are offered by the dealer, and the bot does not sign up itself. It also avoids 入座/上桌/加入 in table chat because the dealer seats bots that say those words during sign-up.
+
+### 3. Redact (`redact`)
+Contributes `redactText` (and the shadow companion `inspectText`) so core strips API keys, tokens, private keys, URL/connection-string passwords, secret assignments, seed phrases, bank cards and CN resident IDs from everything sent to a model. Configured under `plugins.redact.mode` (`off` | `shadow` | `enforce`, default `off`). Spans such as Feishu ids, message aliases, UUIDs, git SHAs and chatlog tag attributes are protected and never changed. The rules are derived from [magpie](https://github.com/yetone/magpie); see `NOTICE`.
 
 ### Reverse Proxy & Path Notice
 
